@@ -101,7 +101,7 @@ module Trough::Views
   end
 
   def subs
-    a 'new', :href => ''
+    a 'new', :href => R(Add)
 
     ul do
       @subs.each do |s|
@@ -117,7 +117,7 @@ module Trough::Views
   def add
     h1 'add.'
 
-    form :action => '/' do
+    form :action => '/', :method => 'post' do
       text 'name:'; input :name => 'name' ; br
       text 'blog url:'; input :name => 'blog_url' ; br
       text 'feed url:'; input :name => 'feed_url' ; br
