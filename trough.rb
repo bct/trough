@@ -108,7 +108,9 @@ module Trough::Views
         li.sub do
           a s.name, :href => s.blog_url
           a '[feed]', :href => s.feed_url
-          a 'x', :href => ''
+          form :method => 'post', :action => R(Delete) do
+            input :type => 'submit', :value => 'x'
+          end
         end
       end
     end
