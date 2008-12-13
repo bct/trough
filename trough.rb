@@ -14,6 +14,7 @@ RSS_NS =  'http://purl.org/rss/1.0/'
 module Trough::Models
   class Subscription < Base
     # turn a subscription into an ntriples line
+    # this is far from a complete implementation...
     # <http://www.w3.org/2001/sw/RDFCore/ntriples/>
     def ntriplify
       # feed URL is unique, node names have to begin with a letter,
@@ -25,9 +26,9 @@ module Trough::Models
 
       # we don't know this is a Person (some blogs are written by many people),
       # so let's call it an Entity.
-      nt << "_:#{node_name} <#{RDF_NS}type>    <#{FOAF_NS}Entity> .\n"
+      nt << "_:#{node_name} <#{RDF_NS}type> <#{FOAF_NS}Entity> .\n"
       # this Entity is called...
-      nt << "_:#{node_name} <#{FOAF_NS}name>   \"#{self.name}\" .\n"
+      nt << "_:#{node_name} <#{FOAF_NS}name> \"#{self.name}\" .\n"
       # this Entity has a blog at...
       nt << "_:#{node_name} <#{FOAF_NS}weblog> <#{self.blog_url}> .\n"
 
