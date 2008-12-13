@@ -109,6 +109,7 @@ module Trough::Views
       @subs.each do |s|
         li.sub do
           a s.name, :href => s.blog_url
+          text ' '
           a '[feed]', :href => s.feed_url
           form :method => 'post', :action => R(Delete) do
             input :type => 'hidden', :name => 'feed_url', :value => s.feed_url
