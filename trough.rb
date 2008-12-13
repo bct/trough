@@ -84,7 +84,7 @@ module Trough::Controllers
 
   class Delete < R '/delete'
     def post
-      Subscription.find_by_feed_url(@input['feed_url']).destroy!
+      Subscription.find_by_feed_url(@input['feed_url']).destroy
 
       redirect '/'
     end
@@ -101,6 +101,8 @@ module Trough::Views
   end
 
   def subs
+    h1 'browse.'
+
     a 'new', :href => R(Add)
 
     ul do
@@ -109,6 +111,7 @@ module Trough::Views
           a s.name, :href => s.blog_url
           a '[feed]', :href => s.feed_url
           form :method => 'post', :action => R(Delete) do
+            input :type => 'hidden', :name => 'feed_url', :value => s.feed_url
             input :type => 'submit', :value => 'x'
           end
         end
