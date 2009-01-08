@@ -4,14 +4,9 @@
 # this requires ActiveRDF and the Redland adapter.
 
 # you'll want to change these:
-FOAF_URL = 'http://necronomicorp.com/reading' # your reading list's URL
+FOAF_URL = './reading.ttl' # your reading list's URL
 FOAF_TYPE = 'turtle' # 'turtle', 'ntriples' or 'rdfxml'
-
-require 'trough'
-
-db = File.join(ENV['HOME'], '.camping.db') # the default camping database
-Camping::Models::Base.establish_connection :adapter => 'sqlite3',
-  :database => db
+MOUNT_URL = 'http://necronomicorp.com/reading' # URL trough is mounted at
 
 require 'active_rdf'
 
@@ -31,9 +26,12 @@ q = Query.new.select(:name, :blog_url, :feed_url) \
   .where(:blog,     FOAF::weblog, :blog_url) \
   .where(:blog_url, RDFS::seeAlso,:feed_url)
 
+require 'net/http'
+require 'uri'
+
 # load the original RDF data into our new database
 a.query(q).each do |name, blog_url, feed_url|
-  Trough::Models::Subscription.create :name => name,
-    :blog_url => blog_url.uri,
-    :feed_url => feed_url.uri
+  Net::HTTP.post_form(URI.parse(MOUNT_URL), {'name' => name,
+                                            'blog_url' => blog_url.uri,
+                                            'feed_url' => feed_url.uri})
 end
