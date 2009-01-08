@@ -14,7 +14,7 @@ Trough serves a list like this from an SQLite database, in ntriples format.
 Venus can also do a bunch of other cool stuff with FOAF reading lists, but we're
 not doing anything with that right now.
 
-All you need is Camping.
+All you need are Sinatra and ActiveRecord.
 
 To set this up in Venus, add to your config.ini:
 
