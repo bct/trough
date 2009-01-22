@@ -60,7 +60,17 @@ class Setup < ActiveRecord::Migration
   end
 end
 
-get '/' do
+helpers do
+  def url(path)
+    u = request.script_name
+    u = u[0..-2] if u[-1].chr == '/'
+    u + path
+  end
+end
+
+# ewwww. i need to do this so that the app will respond if it's not mounted anywhere
+['', '/'].each { |p|
+get p do
   @subs = Subscription.find :all
 
   if params['t'] == 'rdf'
@@ -70,7 +80,7 @@ get '/' do
     haml <<END
 %h1 browse.
 
-%a{:href => '/add'} new
+%a{:href => url('/add')} new
 
 %ul
   - @subs.each do |s|
@@ -79,26 +89,27 @@ get '/' do
       [
       %a{:href => s.feed_url} feed
       ]
-      %form{:method => 'post', :action => 'delete'}
+      %form{:method => 'post', :action => url('/delete')}
         %input{:type => 'hidden', :name => 'feed_url', :value => s.feed_url}/
         %input{:type => 'submit', :value => 'x'}/
 END
   end
 end
+}
 
 post '/' do
   Subscription.create! :name => params[:name],
                         :blog_url => params[:blog_url],
                         :feed_url => params[:feed_url]
 
-  redirect '/'
+  redirect url('/')
 end
 
 get '/add' do
   haml <<END
 %h1 add.
 
-%form{:method => 'post', :action => '/'}
+%form{:method => 'post', :action => url('/')}
   name: <input name="name"><br>
   blog url: <input name="blog_url"><br>
   feed url: <input name="feed_url"><br>
@@ -110,5 +121,5 @@ end
 post '/delete' do
   Subscription.find_by_feed_url(params[:feed_url]).destroy
 
-  redirect '/'
+  redirect url('/')
 end
