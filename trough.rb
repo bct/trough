@@ -10,6 +10,9 @@ configure do
   )
 end
 
+USERNAME = 'user'
+PASSWORD = 'pass'
+
 # define RDF vocabulary namespaces
 RDF_NS =  'http://www.w3.org/1999/02/22-rdf-syntax-ns#'
 RDFS_NS = 'http://www.w3.org/2000/01/rdf-schema#'
@@ -63,7 +66,7 @@ end
 helpers do
   def url(path)
     u = request.script_name
-    u = u[0..-2] if u[-1].chr == '/'
+    u = u[0..-2] if u[-1] and u[-1].chr == '/'
     u + path
   end
 end
@@ -123,3 +126,25 @@ post '/delete' do
 
   redirect url('/')
 end
+
+# spammers go home
+require 'rack/auth/basic'
+
+class PostAuth
+  def initialize app
+    @app = app
+    @auth = Rack::Auth::Basic.new(app) do |u,p|
+      u == USERNAME && p == PASSWORD
+    end
+  end
+
+  def call env
+    if env['REQUEST_METHOD'] == 'POST'
+      @auth.call(env)
+    else
+      @app.call(env)
+    end
+  end
+end
+
+use PostAuth
