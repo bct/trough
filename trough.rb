@@ -71,9 +71,7 @@ helpers do
   end
 end
 
-# ewwww. i need to do this so that the app will respond if it's not mounted anywhere
-['', '/'].each { |p|
-get p do
+get '/?' do
   @subs = Subscription.find :all
 
   if params['t'] == 'rdf'
@@ -98,7 +96,6 @@ get p do
 END
   end
 end
-}
 
 post '/' do
   Subscription.create! :name => params[:name],
