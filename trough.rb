@@ -78,6 +78,9 @@ get '/?' do
   if params['t'] == 'rdf'
     content_type 'text/plain' # <-- that's a crappy mimetype
     @subs.map { |s| s.ntriplify }.join
+  elsif params['t'] == 'feedurls'
+    content_type 'text/plain'
+    @subs.map { |s| s.feed_url + "\n" }.join
   else
     haml <<END
 %h1 browse.
