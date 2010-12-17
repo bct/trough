@@ -1,7 +1,8 @@
 require 'haml'
 require 'sinatra'
+require 'cgi'
 
-require 'activerecord'
+require 'active_record'
 
 configure do
   ActiveRecord::Base.establish_connection(
@@ -90,13 +91,14 @@ get '/?' do
 %ul
   - @subs.each do |s|
     %li.sub
+      %form{:method => 'post', :action => url('/delete'), :style => 'display: inline'}
+        %input{:type => 'hidden', :name => 'feed_url', :value => s.feed_url}/
+        %input{:type => 'submit', :value => 'x'}/
+      %a{:href => url('/e') + '?feed_url=' + CGI.escape(s.feed_url) } e
       %a{:href => s.blog_url}= s.name
       [
       %a{:href => s.feed_url} feed
       ]
-      %form{:method => 'post', :action => url('/delete')}
-        %input{:type => 'hidden', :name => 'feed_url', :value => s.feed_url}/
-        %input{:type => 'submit', :value => 'x'}/
 END
   end
 end
@@ -120,6 +122,34 @@ get '/add' do
 
   <input type="submit">
 END
+end
+
+get '/e' do
+  @sub = Subscription.find_by_feed_url(params[:feed_url])
+
+  haml <<END
+%h1 edit.
+
+%form{:method => 'post', :action => url('/e')}
+  %input{:type => 'hidden', :name => 'old_feed_url', :value => @sub.feed_url}
+  name:
+  %input{:name => 'name', :value => @sub.name}
+  %br
+  blog url:
+  %input{:name => 'blog_url', :value => @sub.blog_url}
+  %br
+  feed url:
+  %input{:name => 'feed_url', :value => @sub.feed_url}
+  %br
+
+  %input{:type=> 'submit'}
+END
+end
+
+post '/e' do
+  @sub = Subscription.find_by_feed_url(params[:old_feed_url])
+  @sub.update_attributes!(:name => params[:name], :feed_url => params[:feed_url], :blog_url => params[:blog_url])
+  redirect url('/')
 end
 
 post '/delete' do
