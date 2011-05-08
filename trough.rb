@@ -1,8 +1,7 @@
-require 'haml'
-require 'sinatra'
-require 'cgi'
+require 'bundler'
+Bundler.require
 
-require 'active_record'
+require 'cgi'
 
 configure do
   ActiveRecord::Base.establish_connection(
