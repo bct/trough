@@ -4,6 +4,7 @@ require 'haml'
 require 'active_record'
 require 'sqlite3'
 
+# we use CGI.escape
 require 'cgi'
 
 USERNAME = 'user'
